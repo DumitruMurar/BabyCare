@@ -1,4 +1,4 @@
-namespace BabyCareAPI
+namespace BabyCare.Api
 {
     public class WeatherForecast
     {
