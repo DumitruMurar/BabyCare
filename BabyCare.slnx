@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/BabyCare.Api/BabyCare.Api.csproj" />
+    <Project Path="src/BabyCare.Application/BabyCare.Application.csproj" />
+    <Project Path="src/BabyCare.Domain/BabyCare.Domain.csproj" />
+    <Project Path="src/BabyCare.Infrastructure/BabyCare.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/BabyCare.IntegrationTests/BabyCare.IntegrationTests.csproj" />
+    <Project Path="tests/BabyCare.UnitTests/BabyCare.UnitTests.csproj" />
+  </Folder>
+</Solution>
