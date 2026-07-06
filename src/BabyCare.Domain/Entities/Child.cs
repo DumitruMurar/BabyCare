@@ -1,4 +1,5 @@
 ﻿using BabyCare.Domain.Enums;
+using BabyCare.Domain.Exceptions;
 
 namespace BabyCare.Domain.Entities
 {
@@ -26,10 +27,10 @@ namespace BabyCare.Domain.Entities
         {
             Id = id;
             ParentId = parentId;
-            FirstName = firstName;
-            LastName = lastName;
-            BirthDate = birthDate;
-            Gender = gender;
+            FirstName = ValidateName(firstName, nameof(FirstName));
+            LastName = ValidateName(lastName, nameof(LastName));
+            BirthDate = ValidateBirthDate(birthDate);
+            Gender = ValidateGender(gender);
         }
 
         public static Child Create(
@@ -48,6 +49,53 @@ namespace BabyCare.Domain.Entities
                 birthDate,
                 gender
                 );
+        }
+
+        private static string ValidateName(string value, string fieldName)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new DomainException($"{fieldName} is required.");
+            }
+
+            var trimmedValue = value.Trim();
+
+            if (trimmedValue.Length > 100)
+            {
+                throw new DomainException($"{fieldName} cannot exceed 100 characters.");
+            }
+
+            if (!trimmedValue.All(c => char.IsLetter(c) || c == ' ' || c == '-' || c == '\''))
+            {
+                throw new DomainException($"{fieldName} contains invalid characters.");
+            }
+
+            return trimmedValue;
+        }
+
+        private static DateOnly ValidateBirthDate(DateOnly birthDate)
+        {
+            if (birthDate == default)
+            {
+                throw new DomainException("Birth date is required.");
+            }
+
+            if (birthDate > DateOnly.FromDateTime(DateTime.UtcNow))
+            {
+                throw new DomainException("Birth date cannot be in the future.");
+            }
+
+            return birthDate;
+        }
+
+        private static Gender ValidateGender(Gender gender)
+        {
+            if (!Enum.IsDefined(gender))
+            {
+                throw new DomainException("Gender is invalid.");
+            }
+
+            return gender;
         }
     }
 }
