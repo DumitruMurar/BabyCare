@@ -16,14 +16,38 @@ namespace BabyCare.Domain.Entities
 
         public Gender Gender { get; private set; }
 
-        public Child()
+        private Child(
+            Guid id,
+            Guid parentId,
+            string firstName,
+            string lastName,
+            DateOnly birthDate,
+            Gender gender)
         {
-
+            Id = id;
+            ParentId = parentId;
+            FirstName = firstName;
+            LastName = lastName;
+            BirthDate = birthDate;
+            Gender = gender;
         }
 
-        public static Child Create()
+        public static Child Create(
+            Guid parentId,
+            string firstName,
+            string lastName,
+            DateOnly birthDate,
+            Gender gender
+            )
         {
-            return new Child();
+            return new Child(
+                Guid.NewGuid(),
+                parentId,
+                firstName,
+                lastName,
+                birthDate,
+                gender
+                );
         }
     }
 }

@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BabyCare.Domain.Exceptions
+﻿namespace BabyCare.Domain.Exceptions
 {
-    internal class DomainException
+    public class DomainException : Exception
     {
+        public DomainException(string message) : base(message)
+        {
+
+        }
     }
 }
