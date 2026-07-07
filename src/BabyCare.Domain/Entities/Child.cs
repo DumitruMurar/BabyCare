@@ -1,10 +1,13 @@
-﻿using BabyCare.Domain.Enums;
+using BabyCare.Domain.Enums;
 using BabyCare.Domain.Exceptions;
+using BabyCare.Domain.ValueObjects;
 
 namespace BabyCare.Domain.Entities
 {
     public sealed class Child
     {
+        private readonly List<WeightMeasurement> _weightMeasurements = [];
+
         public Guid Id { get; }
 
         public Guid ParentId { get; }
@@ -16,6 +19,8 @@ namespace BabyCare.Domain.Entities
         public DateOnly BirthDate { get; private set; }
 
         public Gender Gender { get; private set; }
+
+        public IReadOnlyCollection<WeightMeasurement> WeightMeasurements => _weightMeasurements.AsReadOnly();
 
         private Child(
             Guid id,
@@ -51,23 +56,40 @@ namespace BabyCare.Domain.Entities
                 );
         }
 
+        public WeightMeasurement AddWeight(
+            Weight weight,
+            DateOnly measuredAt,
+            string? notes)
+        {
+            ValidateWeightMeasuredAtIsUnique(measuredAt);
+
+            var weightMeasurement = WeightMeasurement.Create(
+                weight,
+                measuredAt,
+                notes);
+
+            _weightMeasurements.Add(weightMeasurement);
+
+            return weightMeasurement;
+        }
+
         private static string ValidateName(string value, string fieldName)
         {
             if (string.IsNullOrWhiteSpace(value))
             {
-                throw new DomainException($"{fieldName} is required.");
+                throw new DomainException(string.Concat(fieldName, " is required."));
             }
 
             var trimmedValue = value.Trim();
 
             if (trimmedValue.Length > 100)
             {
-                throw new DomainException($"{fieldName} cannot exceed 100 characters.");
+                throw new DomainException(string.Concat(fieldName, " cannot exceed 100 characters."));
             }
 
             if (!trimmedValue.All(c => char.IsLetter(c) || c == ' ' || c == '-' || c == '\''))
             {
-                throw new DomainException($"{fieldName} contains invalid characters.");
+                throw new DomainException(string.Concat(fieldName, " contains invalid characters."));
             }
 
             return trimmedValue;
@@ -96,6 +118,14 @@ namespace BabyCare.Domain.Entities
             }
 
             return gender;
+        }
+
+        private void ValidateWeightMeasuredAtIsUnique(DateOnly measuredAt)
+        {
+            if (_weightMeasurements.Any(weightMeasurement => weightMeasurement.MeasuredAt == measuredAt))
+            {
+                throw new DomainException("Weight measurement already exists for this date.");
+            }
         }
     }
 }
