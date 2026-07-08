@@ -31,7 +31,7 @@ namespace BabyCare.Domain.Entities
             Gender gender)
         {
             Id = id;
-            ParentId = parentId;
+            ParentId = ValidateParentId(parentId);
             FirstName = ValidateName(firstName, nameof(FirstName));
             LastName = ValidateName(lastName, nameof(LastName));
             BirthDate = ValidateBirthDate(birthDate);
@@ -126,6 +126,14 @@ namespace BabyCare.Domain.Entities
             {
                 throw new DomainException("Weight measurement already exists for this date.");
             }
+        }
+
+        private static Guid ValidateParentId(Guid parentid)
+        {
+            if (parentid == Guid.Empty)
+                throw new DomainException("ParentId should not be empty");
+
+            return parentid;
         }
     }
 }
