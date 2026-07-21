@@ -27,7 +27,7 @@ namespace BabyCare.Domain.ValueObjects
         {
             if (value <= 0)
             {
-                throw new DomainException($"Value must be greater than zero.");
+                throw new DomainException("Value must be greater than zero.");
             }
 
             return value;
